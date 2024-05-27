@@ -8,7 +8,8 @@ class Page:
     self.title_font = ctk.CTkFont(family="Roboto", size=20, weight="bold", underline=True)
     self.heading_font = ctk.CTkFont(family="arial", size=14, weight="bold")
     self.normal_font = ctk.CTkFont(family="arial", size=13)
-
+    self.subheading_font = ctk.CTkFont(family="arial", size=13, underline=True)
+  
   #creates all frames meeded for page
   def create_frames(self):
     pass
@@ -25,9 +26,9 @@ class Page:
 
 class LoginPage(Page):
   def __init__(self, window):
-      super().__init__(window)
-      self.login_page = ctk.CTkFrame(self.root)
-      self.login_page.pack()
+    super().__init__(window)
+    self.login_page = ctk.CTkFrame(self.root)
+    self.login_page.pack()
 
   #creates frames for the login page
   def create_frames(self):
@@ -70,11 +71,47 @@ class LoginPage(Page):
     self.sign_in_button = ctk.CTkButton(self.login_frame, text="Sign In", width=100)
     self.sign_in_button.grid(row=4, column=0, padx=5, pady=5)
 
+class HomePage(Page):
+  def __init__(self, window, wrong, right, xp):
+    super().__init__(window)
+    self.wrong = wrong
+    self.right = right
+    self.percentage_right = int((self.right / (self.right + self.wrong)) * 100)
+    self.xp = xp
+    self.page_tabs = ctk.CTkTabview(self.root)
+    self.page_tabs.pack()
+    self.home_tab = self.page_tabs.add("Home")
+    self.home_page = ctk.CTkFrame(self.home_tab)
+    self.home_page.pack()
 
+  #creates frames for the home page
+  def create_frames(self):
+    self.stats_frame = ctk.CTkFrame(self.home_page)
+    self.stats_frame.grid(row=1, column=0, padx=20, pady=20)
+    self.schedule_frame = ctk.CTkFrame(self.home_page)
+    self.schedule_frame.grid(row=1, column=1, padx=20, pady=20)
+    
+  
+  #creates widgets for the home page
+  def create_widgets(self):
+    #titles
+    self.stats_title = ctk.CTkLabel(self.stats_frame, text="Stats", font=self.heading_font)
+    self.stats_title.grid(row=0, column=0)
+    self.schedule_title = ctk.CTkLabel(self.schedule_frame, text="Revision Schedule", font=self.heading_font)
+    self.schedule_title.grid(row=0, column=0)
 
-
-
-
+    #stats
+    self.questions_answered = ctk.CTkLabel(self.stats_frame, text=f"Questions answered: {self.right + self.wrong}" , font=self.normal_font)
+    self.questions_answered.grid(row=2, column=0)
+    self.percentage_display = ctk.CTkLabel(self.stats_frame, text=f"Percentage right: {self.percentage_right}%", font=self.normal_font)
+    self.percentage_display.grid(row=3, column=0)
+    self.xp_display = ctk.CTkLabel(self.stats_frame, text=f"XP: {self.xp}", font=self.normal_font)
+    self.xp_display.grid(row=4, column=0)
+    
+    
+    
+  
+    
 
 
 
@@ -83,8 +120,16 @@ ctk.set_default_color_theme("blue")
 
 root = ctk.CTk()
 root.title("Revision App")
+
+
+#home_page = HomePage(root, 5, 4, 65)
+#home_page.create_frames()
+#home_page.create_widgets()
+
+
 login_page = LoginPage(root)
 login_page.create_frames()
 login_page.create_widgets()
+
 root.mainloop()
 
