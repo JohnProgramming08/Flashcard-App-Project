@@ -1,4 +1,4 @@
-entrypoint = "display.py"
+entrypoint = "login_function.py"
 modules = ["python-3.11:v23-20240125-d91747b"]
 
 hidden = [".pythonlibs"]

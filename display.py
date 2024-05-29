@@ -68,8 +68,8 @@ class LoginPage(Page):
 
     self.login_button = ctk.CTkButton(self.login_frame, text="Login", width=100)
     self.login_button.grid(row=3, column=0, padx=5, pady=5)
-    self.sign_in_button = ctk.CTkButton(self.login_frame, text="Sign In", width=100)
-    self.sign_in_button.grid(row=4, column=0, padx=5, pady=5)
+    self.sign_up_button = ctk.CTkButton(self.login_frame, text="Sign Up", width=100)
+    self.sign_up_button.grid(row=4, column=0, padx=5, pady=5)
 
 class HomePage(Page):
   def __init__(self, window, wrong, right, xp):
