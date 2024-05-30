@@ -22,13 +22,14 @@ class Page:
   def change_pages(self, current_page, next_page):
     current_page.remove()
     next_page.pack()
-
+    
 
 class LoginPage(Page):
-  def __init__(self, window):
+  def __init__(self, window, sign_up):
     super().__init__(window)
     self.login_page = ctk.CTkFrame(self.root)
     self.login_page.pack()
+    self.sign_up = sign_up
 
   #creates frames for the login page
   def create_frames(self):
@@ -68,7 +69,7 @@ class LoginPage(Page):
 
     self.login_button = ctk.CTkButton(self.login_frame, text="Login", width=100)
     self.login_button.grid(row=3, column=0, padx=5, pady=5)
-    self.sign_up_button = ctk.CTkButton(self.login_frame, text="Sign Up", width=100)
+    self.sign_up_button = ctk.CTkButton(self.login_frame, text="Sign Up", command = self.sign_up, width=100)
     self.sign_up_button.grid(row=4, column=0, padx=5, pady=5)
 
 class HomePage(Page):
@@ -82,7 +83,7 @@ class HomePage(Page):
     self.page_tabs.pack()
     self.home_tab = self.page_tabs.add("Home")
     self.home_page = ctk.CTkFrame(self.home_tab)
-    self.home_page.pack()
+    #self.home_page.pack()
 
   #creates frames for the home page
   def create_frames(self):
@@ -114,7 +115,7 @@ class HomePage(Page):
     
 
 
-
+"""
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
 
@@ -133,3 +134,4 @@ login_page.create_widgets()
 
 root.mainloop()
 
+"""
