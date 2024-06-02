@@ -20,7 +20,7 @@ class Page:
 
   #changes pages
   def change_pages(self, current_page, next_page):
-    current_page.remove()
+    current_page.destroy()
     next_page.pack()
     
 
@@ -83,7 +83,7 @@ class HomePage(Page):
     self.page_tabs.pack()
     self.home_tab = self.page_tabs.add("Home")
     self.home_page = ctk.CTkFrame(self.home_tab)
-    #self.home_page.pack()
+    self.home_page.pack()
 
   #creates frames for the home page
   def create_frames(self):

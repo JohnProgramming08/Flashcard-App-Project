@@ -2,27 +2,44 @@ import customtkinter as ctk
 from display import LoginPage, HomePage
 from login_function import sign_up
 
-ctk.set_appearance_mode("dark")
-ctk.set_default_color_theme("blue")
+def main():
+  #setting up root window
+  ctk.set_appearance_mode("dark")
+  ctk.set_default_color_theme("blue")
+  root = ctk.CTk()
+  root.title("Revision App")
+        
+  login_page1 = LoginPage(root, "")
+  login_page1.create_frames()
+  login_page1.create_widgets()
 
-root = ctk.CTk()
-root.title("Revision App")
+  #displays an error message
+  def error_message(message):
+    error_window = ctk.CTkToplevel(root, fg_color="red")
+    error_window.title("Error")
+    error = ctk.CTkLabel(error_window, text=message)
+    error.pack()
 
-login_page = LoginPage(root, sign_up)
-login_page.create_frames()
-login_page.create_widgets()
+  #if the username is valid, creates new account 
+  def sign_up2():
+    username = login_page1.username_entry.get()
+    password = login_page1.password_entry.get()
+    attempt = sign_up(username, password)
+    if attempt == True:
+      home_page = HomePage(root, 1, 1, 1)
+      home_page.create_frames()
+      home_page.create_widgets()
+      login_page1.change_pages(login_page1.login_page, home_page.page_tabs)
 
-def sign_up2():
-    username = login_page.username_entry.get()
-    password = login_page.password_entry.get()
-    if sign_up(username, password):
-            home_page = HomePage(root, 0, 0, 0)
-            home_page.create_frames()
-            home_page.create_widgets()
-            login_page.change_pages(login_page.login_page, home_page.page_tabs)
+    #returns an appropriate error message 
+    elif attempt:
+      error_message("Username already taken")
+
     else:
-      return False
+      error_message("Spaces not allowed")
+      
+  login_page1.sign_up_button.configure(command=sign_up2)
+  root.mainloop()
 
-login_page.login_button.configure(command=sign_up2)
-
-root.mainloop()
+if __name__ == "__main__":
+  main()
