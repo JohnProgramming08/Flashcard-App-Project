@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from display import LoginPage, HomePage
 from login_function import sign_up
+from database_management import get_stats
 
 def main():
   #setting up root window
@@ -26,17 +27,18 @@ def main():
     password = login_page1.password_entry.get()
     attempt = sign_up(username, password)
     if attempt == True:
-      home_page = HomePage(root, 1, 1, 1)
+      stats = get_stats(username)
+      home_page = HomePage(root, stats[1], stats[2], stats[3])
       home_page.create_frames()
       home_page.create_widgets()
       login_page1.change_pages(login_page1.login_page, home_page.page_tabs)
 
     #returns an appropriate error message 
-    elif attempt:
+    elif attempt == "used":
       error_message("Username already taken")
 
     else:
-      error_message("Spaces not allowed")
+      error_message("Spaces are not allowed")
       
   login_page1.sign_up_button.configure(command=sign_up2)
   root.mainloop()

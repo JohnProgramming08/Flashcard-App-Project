@@ -1,6 +1,5 @@
 import customtkinter as ctk
 
-
 class Page:
   def __init__(self, window):
     self.root = window
@@ -74,16 +73,22 @@ class LoginPage(Page):
 
 class HomePage(Page):
   def __init__(self, window, wrong, right, xp):
-    super().__init__(window)
-    self.wrong = wrong
-    self.right = right
-    self.percentage_right = int((self.right / (self.right + self.wrong)) * 100)
-    self.xp = xp
-    self.page_tabs = ctk.CTkTabview(self.root)
-    self.page_tabs.pack()
-    self.home_tab = self.page_tabs.add("Home")
-    self.home_page = ctk.CTkFrame(self.home_tab)
-    self.home_page.pack()
+      super().__init__(window)
+      self.wrong = wrong
+      self.right = right
+      self.total_answered = wrong + right
+      if self.total_answered == 0:
+        self.percentage_right = 0
+      else:
+        self.percentage_right = int((right / (self.total_answered)) * 100)
+      self.xp = xp
+      self.page_tabs = ctk.CTkTabview(self.root)
+      self.page_tabs.pack()
+      self.home_tab = self.page_tabs.add("Home")
+      self.home_page = ctk.CTkFrame(self.home_tab)
+      self.home_page.pack()
+
+    
 
   #creates frames for the home page
   def create_frames(self):
