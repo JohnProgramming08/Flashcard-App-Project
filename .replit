@@ -1,6 +1,7 @@
 #entrypoint = "database_management.py"
 entrypoint = "main.py"
 #entrypoint = "temp.py"
+#entrypoint = "display.py"
 
 modules = ["python-3.11:v23-20240125-d91747b"]
 
