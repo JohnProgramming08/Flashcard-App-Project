@@ -33,4 +33,17 @@ def sign_up(username, password):
   else:
     return "spaces"
 
+def login(username, password):
+  #connect to the database
+  connection = sqlite3.connect("revision_app.db")
+  cursor = connection.cursor()
 
+  cursor.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password))
+  user = cursor.fetchone()
+  connection.close()
+  #returns false if the details are wrong
+  if user is not None:
+    return True
+
+  else:
+    return False

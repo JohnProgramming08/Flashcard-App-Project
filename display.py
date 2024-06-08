@@ -22,7 +22,7 @@ class Page(ctk.CTkFrame):
     next_page.pack(fill='both', expand=True)
 
 
-class LoginPage(Page):
+class IntroPage(Page):
   def __init__(self, parent, sign_up):
     super().__init__(parent)
     self.sign_up = sign_up
@@ -38,6 +38,7 @@ class LoginPage(Page):
     self.contact_frame.grid(row=1, column=0, columnspan=2, padx=20, pady=20)
 
   def create_widgets(self):
+    #explains the app
     self.title = ctk.CTkLabel(self.information_frame, text="Information", font=self.title_font)
     self.title.grid(row=0, column=0)
 
@@ -51,6 +52,7 @@ class LoginPage(Page):
     self.contact_purpose = ctk.CTkLabel(self.contact_frame, text="If you have any questions or concerns please contact me at: dylan08code.gmail.com", font=self.heading_font)
     self.contact_purpose.grid(row=1, column=0, padx=5)
 
+    #login/sign up interface
     self.login_title = ctk.CTkLabel(self.login_frame, text="Account Details", font=self.title_font)
     self.login_title.grid(row=0, column=0)
     
@@ -71,6 +73,7 @@ class HomePage(Page):
     self.wrong = wrong
     self.right = right
     self.total_answered = wrong + right
+    #to avoid division by zero error
     if self.total_answered == 0:
       self.percentage_right = 0
     else:
@@ -86,6 +89,7 @@ class HomePage(Page):
     self.schedule_frame.grid(row=1, column=1, padx=20, pady=20)
 
   def create_widgets(self):
+    #displays user stats
     self.stats_title = ctk.CTkLabel(self.stats_frame, text="Stats", font=self.heading_font)
     self.stats_title.grid(row=0, column=0)
     self.schedule_title = ctk.CTkLabel(self.schedule_frame, text="Revision Schedule", font=self.heading_font)
@@ -103,9 +107,10 @@ class App(ctk.CTk):
   def __init__(self):
     super().__init__()
     self.title("Revision App")
-    self.login_page = LoginPage(self, "")
-    self.login_page.pack()
+    self.intro_page = IntroPage(self, "")
+    self.intro_page.pack()
 
+    #creates the other pages but doesn't add them
     self.tabs = ctk.CTkTabview(self)
     self.home_tab = self.tabs.add("Home")
     self.home_page = HomePage(self.home_tab, wrong=5, right=4, xp=65)
@@ -119,11 +124,11 @@ class App(ctk.CTk):
     
   #testing purposes
   def show_login_page(self):
-    self.login_page = LoginPage(self, self.show_home_page)
-    self.login_page.pack(fill='both', expand=True)
+    self.intro_page = IntroPage(self, self.show_home_page)
+    self.intro_page.pack(fill='both', expand=True)
 
   def show_home_page(self):
-    self.login_page.pack_forget()
+    self.intro_page.pack_forget()
     self.home_page.pack(fill='both', expand=True)
 
 

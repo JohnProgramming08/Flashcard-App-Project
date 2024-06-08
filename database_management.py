@@ -7,3 +7,6 @@ def get_stats(username):
   user_stats = cursor.execute("SELECT * FROM stats WHERE username = ?", (username,)).fetchone()
   connection.close() 
   return user_stats
+
+
+
