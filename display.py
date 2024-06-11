@@ -38,7 +38,7 @@ class IntroPage(Page):
     self.contact_frame.grid(row=1, column=0, columnspan=2, padx=20, pady=20)
 
   def create_widgets(self):
-    #explains the app
+    #explains the apps purpose
     self.title = ctk.CTkLabel(self.information_frame, text="Information", font=self.title_font)
     self.title.grid(row=0, column=0)
 
@@ -103,6 +103,41 @@ class HomePage(Page):
     self.xp_display.grid(row=4, column=0)
 
 
+class TopicsPage(Page):
+  def __init__(self, parent):
+    super().__init__(parent)
+    self.create_frames()
+    self.create_widgets()
+    
+
+  def create_frames(self):
+    self.topics_frame = ctk.CTkFrame(self)
+    self.topics_frame.grid(row=0, column=0, padx=20, pady=20)
+    self.subtopics_frame = ctk.CTkFrame(self)
+    self.subtopics_frame.grid(row=0, column=1, padx=20, pady=20)
+
+  def create_widgets(self):
+    #displays all topics
+    self.topics_title = ctk.CTkLabel(self.topics_frame, text="Topics", font=self.title_font)
+    self.topics_title.grid(row=0, column=0)
+
+    self.topics = ["1.1 Systems architecture",
+                   "1.2 Memory and storage",
+                   "1.3 Networks and protocols",
+                   "1.4 Network security",
+                   "1.5 Systems software",
+                   "1.6 Impacts of technology",
+                   "2.1 Algorithms",
+                   "2.2 Programming fundamentals",
+                   "2.3 Robust programs",
+                   "2.4 Boolean logic",
+                   "2.5 Languages and IDEs"]
+    topic_number = ctk.IntVar(value=0)
+    for i in self.topics:
+      topic_button = ctk.CTkRadioButton(self.topics_frame, text=i, value=self.topics.index(i), variable=topic_number)
+      topic_button.grid(row=self.topics.index(i) + 1, column=0, sticky="w")
+      
+      
 class App(ctk.CTk):
   def __init__(self):
     super().__init__()
@@ -115,6 +150,10 @@ class App(ctk.CTk):
     self.home_tab = self.tabs.add("Home")
     self.home_page = HomePage(self.home_tab, wrong=5, right=4, xp=65)
     self.home_page.pack(fill='both', expand=True)
+
+    self.topics_tab = self.tabs.add("Topics")
+    self.topics_page = TopicsPage(self.topics_tab)
+    self.topics_page.pack(fill='both', expand=True)
 
   def error_message(self, message):
     error_window = ctk.CTkToplevel(self, fg_color="red")
