@@ -12,7 +12,7 @@ class Page(ctk.CTkFrame):
   def create_frames(self):
     pass
 
-  #creates all widgets needed
+  #creates and all widgets needed
   def create_widgets(self):
     pass
 
@@ -104,11 +104,11 @@ class HomePage(Page):
 
 
 class TopicsPage(Page):
-  def __init__(self, parent):
+  def __init__(self, parent, radio_command):
     super().__init__(parent)
     self.create_frames()
     self.create_widgets()
-    
+    self.radio_command = radio_command
 
   def create_frames(self):
     self.topics_frame = ctk.CTkFrame(self)
@@ -117,7 +117,7 @@ class TopicsPage(Page):
     self.subtopics_frame.grid(row=0, column=1, padx=20, pady=20)
 
   def create_widgets(self):
-    #displays all topics
+    #displays all topics as radio buttons
     self.topics_title = ctk.CTkLabel(self.topics_frame, text="Topics", font=self.title_font)
     self.topics_title.grid(row=0, column=0)
 
@@ -132,11 +132,38 @@ class TopicsPage(Page):
                    "2.3 Robust programs",
                    "2.4 Boolean logic",
                    "2.5 Languages and IDEs"]
-    topic_number = ctk.IntVar(value=0)
+    self.topic_number = ctk.IntVar(value=0)
+
+    self.subtopics = [["1.1.1 CPU architecture", "1.1.2 CPU performance", "1.1.3 Embedded systems"],
+                      ["1.2.1 Primary storage", "1.2.2 Secondary storage", "1.2.3 Units of storage", "1.2.4 Data storage", "1.2.5 Compression"],
+                      ["1.3.1 Networks and topologies", "1.3.2 Networks, protocols and layers"],
+                      ["1.4.1 Threats to computer systems", "1.4.2 Identifying and preventing vulnerabilities"],
+                      ["1.5.1 Operating systems", "1.5.2 Utility software"],
+                      ["1.6.1 Impacts of technology"],
+                      ["2.1.1 Computational thinking", "2.1.2 Designing algorithms", "2.1.3 Searching and sorting algorithms"],
+                      ["2.2.1 Programming fundamentals", "2.2.2 Data types", "2.2.3 Programming techniques"],
+                      ["2.3.1 Defensive design", "2.3.2 Testing"],
+                      ["2.4.1 Boolean logic"],
+                      ["2.5.1 Languages"],
+                      ["2.6.1 IDEs"]]
+
+    self.subtopic_buttons = []
+    def display_subtopics():
+      for i in self.subtopic_buttons:
+        i.destroy()
+        
+      for i in range(len(self.subtopics[self.topic_number.get()])):
+        #checkbox for each subtopic
+        subtopic_button = ctk.CTkCheckBox(self.subtopics_frame, text=self.subtopics[self.topic_number.get()][i])
+        subtopic_button.grid(row=i, column=0, sticky="w")
+        self.subtopic_buttons.append(subtopic_button)
+        
+    
     for i in self.topics:
-      topic_button = ctk.CTkRadioButton(self.topics_frame, text=i, value=self.topics.index(i), variable=topic_number)
+      topic_button = ctk.CTkRadioButton(self.topics_frame, text=i, value=self.topics.index(i), variable=self.topic_number, command=display_subtopics)
       topic_button.grid(row=self.topics.index(i) + 1, column=0, sticky="w")
-      
+
+  
       
 class App(ctk.CTk):
   def __init__(self):
@@ -152,7 +179,7 @@ class App(ctk.CTk):
     self.home_page.pack(fill='both', expand=True)
 
     self.topics_tab = self.tabs.add("Topics")
-    self.topics_page = TopicsPage(self.topics_tab)
+    self.topics_page = TopicsPage(self.topics_tab, "")
     self.topics_page.pack(fill='both', expand=True)
 
   def error_message(self, message):
