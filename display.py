@@ -104,11 +104,10 @@ class HomePage(Page):
 
 
 class TopicsPage(Page):
-  def __init__(self, parent, radio_command):
+  def __init__(self, parent):
     super().__init__(parent)
     self.create_frames()
     self.create_widgets()
-    self.radio_command = radio_command
 
   def create_frames(self):
     self.topics_frame = ctk.CTkFrame(self)
@@ -117,7 +116,6 @@ class TopicsPage(Page):
     self.subtopics_frame.grid(row=0, column=1, padx=20, pady=20)
 
   def create_widgets(self):
-    #displays all topics as radio buttons
     self.topics_title = ctk.CTkLabel(self.topics_frame, text="Topics", font=self.title_font)
     self.topics_title.grid(row=0, column=0)
 
@@ -144,24 +142,53 @@ class TopicsPage(Page):
                       ["2.2.1 Programming fundamentals", "2.2.2 Data types", "2.2.3 Programming techniques"],
                       ["2.3.1 Defensive design", "2.3.2 Testing"],
                       ["2.4.1 Boolean logic"],
-                      ["2.5.1 Languages"],
-                      ["2.6.1 IDEs"]]
+                      ["2.5.1 Languages", "2.5.1 IDEs"]]
 
+    self.selected_topics = []
+    #function to make a list of chosen subtopics
+    def checkbox_command(subtopic):
+      current_state = self.checked_topic.get()
+      if current_state == "on":
+        self.checked_topic.set("off")
+        
+      else:
+        self.checked_topic.set("on")
+        
+      if subtopic in self.selected_topics:
+        self.selected_topics.remove(subtopic)
+        
+      else:
+        self.selected_topics.append(subtopic)
+  
+    
+    #checkbox for each subtopic
+    self.subtopics_title = ctk.CTkLabel(self.subtopics_frame, text="Subtopics", font=self.subheading_font)
+    self.subtopics_title.grid(row=0, column=0)
+    
+    self.checked_topic = ctk.StringVar(value="off")
     self.subtopic_buttons = []
     def display_subtopics():
-      for i in self.subtopic_buttons:
+      for i in reversed(self.subtopic_buttons):
+        self.subtopic_buttons.pop(self.subtopic_buttons.index(i))
+        self.selected_topics.clear()
         i.destroy()
         
       for i in range(len(self.subtopics[self.topic_number.get()])):
-        #checkbox for each subtopic
-        subtopic_button = ctk.CTkCheckBox(self.subtopics_frame, text=self.subtopics[self.topic_number.get()][i])
-        subtopic_button.grid(row=i, column=0, sticky="w")
+        subtopic = self.subtopics[self.topic_number.get()][i]
+        subtopic_button = ctk.CTkCheckBox(self.subtopics_frame, text=self.subtopics[self.topic_number.get()][i], font=self.normal_font, variable=ctk.StringVar(value="off"), onvalue="on", offvalue="off", command=lambda s=subtopic: checkbox_command(s))
+        subtopic_button.grid(row=i+1, column=0, sticky="w")
         self.subtopic_buttons.append(subtopic_button)
         
-    
+    #displays all topics as radio buttons 
     for i in self.topics:
-      topic_button = ctk.CTkRadioButton(self.topics_frame, text=i, value=self.topics.index(i), variable=self.topic_number, command=display_subtopics)
+      topic_button = ctk.CTkRadioButton(self.topics_frame, text=i, font=self.heading_font, value=self.topics.index(i), variable=self.topic_number, command=display_subtopics)
       topic_button.grid(row=self.topics.index(i) + 1, column=0, sticky="w")
+
+    self.add_button = ctk.CTkButton(self, text="Add")
+    self.add_button.grid(row=2, column=0, columnspan=2, padx=5, pady=10)
+    self.remove_button = ctk.CTkButton(self, text="Remove")
+    self.remove_button.grid(row=3, column=0, columnspan=2, padx=5, pady=10)
+    
 
   
       
@@ -179,7 +206,7 @@ class App(ctk.CTk):
     self.home_page.pack(fill='both', expand=True)
 
     self.topics_tab = self.tabs.add("Topics")
-    self.topics_page = TopicsPage(self.topics_tab, "")
+    self.topics_page = TopicsPage(self.topics_tab)
     self.topics_page.pack(fill='both', expand=True)
 
   def error_message(self, message):
