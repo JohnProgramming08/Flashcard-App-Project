@@ -1,6 +1,6 @@
 from contextlib import suppress
 
-class Topics:
+class Topics():
   def __init__(self):
     self.chosen_topics = []
 
@@ -9,11 +9,15 @@ class Topics:
     if clicked == 1:
       for i in selected_topics:
         if i in self.chosen_topics:
-          break
-        self.chosen_topics.append(i)
+          pass
+          
+        else:
+          self.chosen_topics.append(i)
+          
+      return self.chosen_topics
 
-    if clicked == 0:
-      for i in selected_topics:
-        with suppress(ValueError):
-          self.chosen_topics.remove(i)
+    for i in selected_topics:
+      with suppress(ValueError):
+        self.chosen_topics.remove(i)
+    return self.chosen_topics
 

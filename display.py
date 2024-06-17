@@ -31,9 +31,9 @@ class IntroPage(Page):
 
   def create_frames(self):
     self.information_frame = ctk.CTkFrame(self)
-    self.information_frame.grid(row=0, column=0, padx=20, pady=20)
+    self.information_frame.grid(row=0, column=0, padx=20, pady=20, sticky="n")
     self.login_frame = ctk.CTkFrame(self)
-    self.login_frame.grid(row=0, column=1, padx=20, pady=20)
+    self.login_frame.grid(row=0, column=1, padx=20, pady=20, sticky="n")
     self.contact_frame = ctk.CTkFrame(self)
     self.contact_frame.grid(row=1, column=0, columnspan=2, padx=20, pady=20)
 
@@ -49,7 +49,7 @@ class IntroPage(Page):
 
     self.contact_title = ctk.CTkLabel(self.contact_frame, text="Contact", font=self.title_font)
     self.contact_title.grid(row=0, column=0)
-    self.contact_purpose = ctk.CTkLabel(self.contact_frame, text="If you have any questions or concerns please contact me at: dylan08code.gmail.com", font=self.heading_font)
+    self.contact_purpose = ctk.CTkLabel(self.contact_frame, text="If you have any questions or concerns please contact me at: dylan08code@gmail.com", font=self.heading_font)
     self.contact_purpose.grid(row=1, column=0, padx=5)
 
     #login/sign up interface
@@ -78,15 +78,15 @@ class HomePage(Page):
       self.percentage_right = 0
     else:
       self.percentage_right = int((right / self.total_answered) * 100)
-      self.xp = xp
+    self.xp = xp
     self.create_frames()
     self.create_widgets()
 
   def create_frames(self):
     self.stats_frame = ctk.CTkFrame(self)
-    self.stats_frame.grid(row=1, column=0, padx=20, pady=20)
+    self.stats_frame.grid(row=1, column=0, padx=20, pady=20, sticky="n")
     self.schedule_frame = ctk.CTkFrame(self)
-    self.schedule_frame.grid(row=1, column=1, padx=20, pady=20)
+    self.schedule_frame.grid(row=1, column=1, padx=20, pady=20, sticky="n")
 
   def create_widgets(self):
     #displays user stats
@@ -111,9 +111,11 @@ class TopicsPage(Page):
 
   def create_frames(self):
     self.topics_frame = ctk.CTkFrame(self)
-    self.topics_frame.grid(row=0, column=0, padx=20, pady=20)
+    self.topics_frame.grid(row=0, column=0, padx=20, pady=20, sticky="n")
     self.subtopics_frame = ctk.CTkFrame(self)
-    self.subtopics_frame.grid(row=0, column=1, padx=20, pady=20)
+    self.subtopics_frame.grid(row=0, column=1, padx=20, pady=20, sticky="n")
+    self.chosen_topics_frame = ctk.CTkFrame(self)
+    self.chosen_topics_frame.grid(row=0, column=2, padx=20, pady=20, sticky="n")
 
   def create_widgets(self):
     self.topics_title = ctk.CTkLabel(self.topics_frame, text="Topics", font=self.title_font)
@@ -159,7 +161,6 @@ class TopicsPage(Page):
         
       else:
         self.selected_topics.append(subtopic)
-  
     
     #checkbox for each subtopic
     self.subtopics_title = ctk.CTkLabel(self.subtopics_frame, text="Subtopics", font=self.subheading_font)
@@ -168,6 +169,7 @@ class TopicsPage(Page):
     self.checked_topic = ctk.StringVar(value="off")
     self.subtopic_buttons = []
     def display_subtopics():
+      #destroys current checkboxes before creating new ones
       for i in reversed(self.subtopic_buttons):
         self.subtopic_buttons.pop(self.subtopic_buttons.index(i))
         self.selected_topics.clear()
@@ -184,11 +186,16 @@ class TopicsPage(Page):
       topic_button = ctk.CTkRadioButton(self.topics_frame, text=i, font=self.heading_font, value=self.topics.index(i), variable=self.topic_number, command=display_subtopics)
       topic_button.grid(row=self.topics.index(i) + 1, column=0, sticky="w")
 
-    self.add_button = ctk.CTkButton(self, text="Add")
+    self.add_button = ctk.CTkButton(self, text="Add", fg_color="green")
     self.add_button.grid(row=2, column=0, columnspan=2, padx=5, pady=10)
-    self.remove_button = ctk.CTkButton(self, text="Remove")
+    self.remove_button = ctk.CTkButton(self, text="Remove", fg_color="red")
     self.remove_button.grid(row=3, column=0, columnspan=2, padx=5, pady=10)
-    
+
+    #displays chosen topics
+    self.chosen_topics_title = ctk.CTkLabel(self.chosen_topics_frame, text="Chosen Topics", font=self.title_font)
+    self.chosen_topics_title.grid(row=0, column=0)
+    self.chosen_topics = ctk.CTkLabel(self.chosen_topics_frame, text="", font=self.normal_font)
+    self.chosen_topics.grid(row=1, column=0)
 
   
       
@@ -215,13 +222,5 @@ class App(ctk.CTk):
     error = ctk.CTkLabel(error_window, text=message)
     error.pack()
     
-  #testing purposes
-  def show_login_page(self):
-    self.intro_page = IntroPage(self, self.show_home_page)
-    self.intro_page.pack(fill='both', expand=True)
-
-  def show_home_page(self):
-    self.intro_page.pack_forget()
-    self.home_page.pack(fill='both', expand=True)
 
 
