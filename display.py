@@ -120,34 +120,21 @@ class TopicsPage(Page):
   def create_widgets(self):
     self.topics_title = ctk.CTkLabel(self.topics_frame, text="Topics", font=self.title_font)
     self.topics_title.grid(row=0, column=0)
-
-    self.topics = ["1.1 Systems architecture",
-                   "1.2 Memory and storage",
-                   "1.3 Networks and protocols",
-                   "1.4 Network security",
-                   "1.5 Systems software",
-                   "1.6 Impacts of technology",
-                   "2.1 Algorithms",
-                   "2.2 Programming fundamentals",
-                   "2.3 Robust programs",
-                   "2.4 Boolean logic",
-                   "2.5 Languages and IDEs"]
-    self.topic_number = ctk.IntVar(value=0)
-
-    self.subtopics = [["1.1.1 CPU architecture", "1.1.2 CPU performance", "1.1.3 Embedded systems"],
-                      ["1.2.1 Primary storage", "1.2.2 Secondary storage", "1.2.3 Units of storage", "1.2.4 Data storage", "1.2.5 Compression"],
-                      ["1.3.1 Networks and topologies", "1.3.2 Networks, protocols and layers"],
-                      ["1.4.1 Threats to computer systems", "1.4.2 Identifying and preventing vulnerabilities"],
-                      ["1.5.1 Operating systems", "1.5.2 Utility software"],
-                      ["1.6.1 Impacts of technology"],
-                      ["2.1.1 Computational thinking", "2.1.2 Designing algorithms", "2.1.3 Searching and sorting algorithms"],
-                      ["2.2.1 Programming fundamentals", "2.2.2 Data types", "2.2.3 Programming techniques"],
-                      ["2.3.1 Defensive design", "2.3.2 Testing"],
-                      ["2.4.1 Boolean logic"],
-                      ["2.5.1 Languages", "2.5.1 IDEs"]]
+    #displays all topics as radio buttons and all subtopics as checkboxes
+    self.topics = [["1.1 Systems architecture", "1.1.1 CPU architecture", "1.1.2 CPU performance", "1.1.3 Embedded systems"],
+                   ["1.2 Memory and storage", "1.2.1 Primary storage", "1.2.2 Secondary storage", "1.2.3 Units of storage", "1.2.4 Data storage", "1.2.5 Compression"],
+                   ["1.3 Networks and protocols", "1.3.1 Networks and topologies", "1.3.2 Networks, protocols and layers"],
+                   ["1.4 Network security", "1.4.1 Threats to computer systems", "1.4.2 Identifying and preventing vulnerabilities"],
+                   ["1.5 Systems software", "1.5.1 Operating systems", "1.5.2 Utility software"],
+                   ["1.6 Impacts of technology", "1.6.1 Impacts of technology"],
+                   ["2.1 Algorithms", "2.1.1 Computational thinking", "2.1.2 Designing algorithms", "2.1.3 Searching and sorting algorithms"],
+                   ["2.2 Programming fundamentals", "2.2.1 Programming fundamentals", "2.2.2 Data types", "2.2.3 Programming techniques"],
+                   ["2.3 Robust programs", "2.3.1 Defensive design", "2.3.2 Testing"],
+                   ["2.4 Boolean logic", "2.4.1 Boolean logic"],
+                   ["2.5 Languages and IDEs", "2.5.1 Languages", "2.5.1 IDEs"]]
 
     self.selected_topics = []
-    #function to make a list of chosen subtopics
+    #function to make a list of checked subtopics
     def checkbox_command(subtopic):
       current_state = self.checked_topic.get()
       if current_state == "on":
@@ -165,7 +152,7 @@ class TopicsPage(Page):
     #checkbox for each subtopic
     self.subtopics_title = ctk.CTkLabel(self.subtopics_frame, text="Subtopics", font=self.subheading_font)
     self.subtopics_title.grid(row=0, column=0)
-    
+
     self.checked_topic = ctk.StringVar(value="off")
     self.subtopic_buttons = []
     def display_subtopics():
@@ -174,29 +161,30 @@ class TopicsPage(Page):
         self.subtopic_buttons.pop(self.subtopic_buttons.index(i))
         self.selected_topics.clear()
         i.destroy()
-        
-      for i in range(len(self.subtopics[self.topic_number.get()])):
-        subtopic = self.subtopics[self.topic_number.get()][i]
-        subtopic_button = ctk.CTkCheckBox(self.subtopics_frame, text=self.subtopics[self.topic_number.get()][i], font=self.normal_font, variable=ctk.StringVar(value="off"), onvalue="on", offvalue="off", command=lambda s=subtopic: checkbox_command(s))
+
+      #creates new checkboxes
+      for i in range(len(self.topics[self.topic_number.get()])-1):
+        subtopic = self.topics[self.topic_number.get()][i+1]
+        subtopic_button = ctk.CTkCheckBox(self.subtopics_frame, text=self.topics[self.topic_number.get()][i+1], font=self.normal_font, variable=ctk.StringVar(value="off"), onvalue="on", offvalue="off", command=lambda s=subtopic: checkbox_command(s))
         subtopic_button.grid(row=i+1, column=0, sticky="w")
         self.subtopic_buttons.append(subtopic_button)
         
     #displays all topics as radio buttons 
+    self.topic_number = ctk.IntVar(value=0)
     for i in self.topics:
-      topic_button = ctk.CTkRadioButton(self.topics_frame, text=i, font=self.heading_font, value=self.topics.index(i), variable=self.topic_number, command=display_subtopics)
+      topic_button = ctk.CTkRadioButton(self.topics_frame, text=i[0], font=self.heading_font, value=self.topics.index(i), variable=self.topic_number, command=display_subtopics)
       topic_button.grid(row=self.topics.index(i) + 1, column=0, sticky="w")
-
+  
     self.add_button = ctk.CTkButton(self, text="Add", fg_color="green")
     self.add_button.grid(row=2, column=0, columnspan=2, padx=5, pady=10)
     self.remove_button = ctk.CTkButton(self, text="Remove", fg_color="red")
     self.remove_button.grid(row=3, column=0, columnspan=2, padx=5, pady=10)
-
+  
     #displays chosen topics
     self.chosen_topics_title = ctk.CTkLabel(self.chosen_topics_frame, text="Chosen Topics", font=self.title_font)
     self.chosen_topics_title.grid(row=0, column=0)
     self.chosen_topics = ctk.CTkLabel(self.chosen_topics_frame, text="", font=self.normal_font)
     self.chosen_topics.grid(row=1, column=0)
-
   
       
 class App(ctk.CTk):
