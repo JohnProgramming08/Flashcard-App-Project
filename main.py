@@ -1,7 +1,7 @@
 import sqlite3
 from display import HomePage, App
 from intro_function import sign_up, login
-from topics_function import Topics
+from topics_function import Topics 
 
 def main():
   #gets the users stats
@@ -49,12 +49,14 @@ def main():
     for i in topics:
       chosen_topics += f"{i}\n"
     app.topics_page.chosen_topics.configure(text=chosen_topics)
-  
+
+  #adds selected topics to the list
   def add_click():
     selected_topics = app.topics_page.selected_topics
     selected_topics = topics.click(selected_topics, 1)
     show_topics(selected_topics)
-      
+
+  #removes selected topics from the list
   def remove_click():
     selected_topics = app.topics_page.selected_topics
     selected_topics = topics.click(selected_topics, 0)

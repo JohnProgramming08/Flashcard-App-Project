@@ -28,7 +28,7 @@ class IntroPage(Page):
     self.sign_up = sign_up
     self.create_frames()
     self.create_widgets()
-
+    
   def create_frames(self):
     self.information_frame = ctk.CTkFrame(self)
     self.information_frame.grid(row=0, column=0, padx=20, pady=20, sticky="n")
