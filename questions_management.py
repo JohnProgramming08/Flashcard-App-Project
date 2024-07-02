@@ -1,8 +1,8 @@
 import sqlite3
 
 connection = sqlite3.connect("revision_app.db")
-connection.execute("PRAGMA foreign_keys = ON")
 cursor = connection.cursor()
+cursor.execute("DROP TABLE IF EXISTS flashcards")
 
 create_table = """CREATE TABLE IF NOT EXISTS flashcards(
                   question_text TEXT PRIMARY KEY,
@@ -98,6 +98,7 @@ questions = [["What is the purpose of the CPU?", "To complete the fetch-execute 
              
 for i in questions:
   add_question(i)
+  #print(cursor.execute(f"SELECT * FROM flashcards WHERE question_text = {questions[0]}"))
                   
 
 

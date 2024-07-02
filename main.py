@@ -2,6 +2,7 @@ import sqlite3
 from display import HomePage, App
 from intro_function import sign_up, login
 from topics_function import Topics 
+from study_function import get_questions
 
 def main():
   #gets the users stats
@@ -62,12 +63,20 @@ def main():
     selected_topics = topics.click(selected_topics, 0)
     show_topics(selected_topics)
 
+  #gets the questions with the chosen topics from database
+  def select_questions():
+    questions = get_questions(app.topics_page.chosen_topics.cget("text").split("\n"))
+    app.study_page.questions = questions
+    app.study_page.start_study()
+    
+  
   app = App()
   app.intro_page.sign_up_button.configure(command=sign_up2)
   app.intro_page.login_button.configure(command=login2)
   topics = Topics()
   app.topics_page.add_button.configure(command=add_click)
   app.topics_page.remove_button.configure(command=remove_click)
+  app.study_page.study_button.configure(command=select_questions)
   app.mainloop()
 
 if __name__ == "__main__":
