@@ -19,5 +19,6 @@ class Topics():
     for i in selected_topics:
       with suppress(ValueError):
         self.chosen_topics.remove(i)
+        
     return self.chosen_topics
 

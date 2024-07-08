@@ -190,38 +190,39 @@ class TopicsPage(Page):
 class StudyPage(Page):
   def __init__(self, parent):
     super().__init__(parent)
-    self.questions = [[]]
+    self.questions = []
+    self.delayed_questions = []
     self.create_frames()
     self.create_widgets()
     self.original_colour = self.flashcard_frame.cget("fg_color")
+    self.index = 0
 
   def create_frames(self):
     self.flashcard_frame = ctk.CTkFrame(self, width=300, height=200)
 
   def create_widgets(self):
+    self.question = ctk.CTkLabel(self.flashcard_frame, text="")
+    self.answer = ctk.CTkLabel(self.flashcard_frame, text="")
+      
     self.study_button = ctk.CTkButton(self, text="Get Studying!", command=lambda: self.start_study())
     self.study_button.grid(row=0, column=0, pady=100, padx=150)
-    self.index = 0
-  
+    
     #flashcard functionality
     def show_answer():
       self.answer.configure(text=f"Answer:\n{self.questions[self.index][1]}", font=self.normal_font)
       self.correct_button.grid(row=2, column=0, padx=5, pady=10)
       self.incorrect_button.grid(row=2, column=2, padx=5, pady=10)
       self.answer_button.grid_forget()
-      self.index += 1
 
     self.answer_button = ctk.CTkButton(self.flashcard_frame, text="Show Answer", command=show_answer)
-    def question_state(colour):
-      self.next_button.grid(row=2, column=1, padx=5, pady=10)
-      self.flashcard_frame.configure(fg_color=colour)
-      self.correct_button.grid_forget()
-      self.incorrect_button.grid_forget()
-
-    self.correct_button = ctk.CTkButton(self.flashcard_frame, text="Correct", fg_color="green", command=lambda: question_state("green"))
-    self.incorrect_button = ctk.CTkButton(self.flashcard_frame, text="Incorrect", fg_color="red", command=lambda: question_state("red"))
+    self.correct_button = ctk.CTkButton(self.flashcard_frame, text="Correct", fg_color="green", command=lambda: self.question_state("green"))
+    self.incorrect_button = ctk.CTkButton(self.flashcard_frame, text="Incorrect", fg_color="red", command=lambda: self.question_state("red"))
 
     def next_question():
+      self.index += 1
+      if self.index == len(self.questions):
+        self.index = 0
+        
       self.flashcard_frame.configure(fg_color=self.original_colour)
       self.question.configure(text=f"Question:\n{self.questions[self.index][0]}", font=self.normal_font)
       self.answer.configure(text="")
@@ -229,6 +230,8 @@ class StudyPage(Page):
       self.next_button.grid_forget()
 
     self.next_button = ctk.CTkButton(self.flashcard_frame, text="Next Question", command=next_question)
+
+    #returns page to original state
     def stop_study():
       self.flashcard_frame.configure(fg_color=self.original_colour)
       self.flashcard_frame.grid_forget()
@@ -239,23 +242,26 @@ class StudyPage(Page):
       self.correct_button.grid_forget()
       self.stop_button.grid_forget()
       self.study_button.grid(row=0, column=0, pady=100, padx=150)
-
-
-
+      
     self.stop_button = ctk.CTkButton(self, text="Stop Studying", command=stop_study)
-    
 
+  #some functions are defined outside of create_widgets due to being called in main.py
   #sets up flashcard UI and functionality
   def start_study(self):
     self.study_button.grid_forget()
     self.flashcard_frame.grid(row=0, column=0, padx=20, pady=20)
-    self.question = ctk.CTkLabel(self.flashcard_frame, text=f"Question:\n{self.questions[self.index][0]}", font=self.normal_font)
+    self.question.configure(text=f"Question:\n{self.questions[self.index][0]}", font=self.normal_font)
     self.question.grid(row=0, column=1, padx=10, pady=10)
-    self.answer = ctk.CTkLabel(self.flashcard_frame, text="")
+    self.answer.configure(text="")
     self.answer.grid(row=1, column=1, padx=10, pady=10)
     self.answer_button.grid(row=2, column=1, padx=20, pady=20)
     self.stop_button.grid(row=1, column=0, padx=10, pady=10)
-    
+
+  def question_state(self, colour):
+    self.next_button.grid(row=2, column=1, padx=5, pady=10)
+    self.flashcard_frame.configure(fg_color=colour)
+    self.correct_button.grid_forget()
+    self.incorrect_button.grid_forget()
     
     
     
@@ -272,7 +278,6 @@ class App(ctk.CTk):
     self.tabs = ctk.CTkTabview(self)
     self.home_tab = self.tabs.add("Home")
     self.home_page = HomePage(self.home_tab, wrong=5, right=4, xp=65)
-    self.home_page.pack(fill='both', expand=True)
 
     self.topics_tab = self.tabs.add("Topics")
     self.topics_page = TopicsPage(self.topics_tab)
@@ -288,5 +293,3 @@ class App(ctk.CTk):
     error = ctk.CTkLabel(error_window, text=message)
     error.pack()
     
-
-

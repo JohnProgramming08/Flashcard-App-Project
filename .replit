@@ -3,6 +3,7 @@ entrypoint = "main.py"
 #entrypoint = "intro_function.py"
 #entrypoint = "database_management.py"
 #entrypoint = "questions_management.py"
+#entrypoint = "temp2.py"
 
 modules = ["python-3.11:v23-20240125-d91747b"]
 
