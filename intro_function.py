@@ -111,7 +111,7 @@ def sign_up(username, password):
                    ["Why are error diagnostics important?", "To help programmers with debugging.", 1, "2.5.2 IDEs"]]
           
       for question in questions:
-        add_question(question)
+        add_question(question[0])
 
       return True
 

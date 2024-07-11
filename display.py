@@ -1,5 +1,4 @@
 import customtkinter as ctk
-import time
 
 class Page(ctk.CTkFrame):
   def __init__(self, parent):
@@ -43,9 +42,9 @@ class IntroPage(Page):
     self.title = ctk.CTkLabel(self.information_frame, text="Information", font=self.title_font)
     self.title.grid(row=0, column=0)
 
-    self.purpose = ctk.CTkLabel(self.information_frame, text="This is a revision/study app to help UK students revise.\n", font=self.heading_font)
+    self.purpose = ctk.CTkLabel(self.information_frame, text="This is a revision app to help UK students revise.\n", font=self.heading_font)
     self.purpose.grid(row=1, column=0, padx=5)
-    self.purpose2 = ctk.CTkLabel(self.information_frame, text="This app has spaced repetition algorithms, downloadable\npast papers, quizzes and more! If you would wish to try\nit out then please press sign in.", font=self.normal_font)
+    self.purpose2 = ctk.CTkLabel(self.information_frame, text="This app has a spaced repetition algorithm, nearly\na hundred questions and more! This app was made as a holiday\nproject to improve my skills over the summer. If you would wish to\ntry it out then please press sign up!", font=self.normal_font)
     self.purpose2.grid(row=2, column=0, padx=5)
 
     self.contact_title = ctk.CTkLabel(self.contact_frame, text="Contact", font=self.title_font)
@@ -71,30 +70,34 @@ class IntroPage(Page):
 class HomePage(Page):
   def __init__(self, parent, wrong, right, xp):
     super().__init__(parent)
+    self.recommended_topics = []
     self.wrong = wrong
     self.right = right
     self.total_answered = wrong + right
+    self.xp = xp
+    
     #to avoid division by zero error
     if self.total_answered == 0:
       self.percentage_right = 0
+      
     else:
       self.percentage_right = int((right / self.total_answered) * 100)
-    self.xp = xp
+      
     self.create_frames()
     self.create_widgets()
 
   def create_frames(self):
     self.stats_frame = ctk.CTkFrame(self)
     self.stats_frame.grid(row=1, column=0, padx=20, pady=20, sticky="n")
-    self.schedule_frame = ctk.CTkFrame(self)
-    self.schedule_frame.grid(row=1, column=1, padx=20, pady=20, sticky="n")
+    self.recommended_topics_frame = ctk.CTkFrame(self)
+    self.recommended_topics_frame.grid(row=1, column=1, padx=20, pady=20, sticky="n")
 
   def create_widgets(self):
     #displays user stats
     self.stats_title = ctk.CTkLabel(self.stats_frame, text="Stats", font=self.heading_font)
     self.stats_title.grid(row=0, column=0)
-    self.schedule_title = ctk.CTkLabel(self.schedule_frame, text="Revision Schedule", font=self.heading_font)
-    self.schedule_title.grid(row=0, column=0)
+    self.topics_title = ctk.CTkLabel(self.recommended_topics_frame, text="Recommended Topics", font=self.heading_font)
+    self.topics_title.grid(row=0, column=0)
 
     self.questions_answered = ctk.CTkLabel(self.stats_frame, text=f"Questions answered: {self.right + self.wrong}", font=self.normal_font)
     self.questions_answered.grid(row=2, column=0)
@@ -103,6 +106,10 @@ class HomePage(Page):
     self.xp_display = ctk.CTkLabel(self.stats_frame, text=f"XP: {self.xp}", font=self.normal_font)
     self.xp_display.grid(row=4, column=0)
 
+    self.recommended_topics_label = ctk.CTkLabel(self.recommended_topics_frame, text="", font=self.normal_font)
+    self.recommended_topics_label.grid(row=1, column=0)
+
+  
 
 class TopicsPage(Page):
   def __init__(self, parent):
@@ -187,6 +194,7 @@ class TopicsPage(Page):
     self.chosen_topics = ctk.CTkLabel(self.chosen_topics_frame, text="", font=self.normal_font)
     self.chosen_topics.grid(row=1, column=0)
 
+
 class StudyPage(Page):
   def __init__(self, parent):
     super().__init__(parent)
@@ -222,12 +230,21 @@ class StudyPage(Page):
       self.index += 1
       if self.index == len(self.questions):
         self.index = 0
-        
-      self.flashcard_frame.configure(fg_color=self.original_colour)
-      self.question.configure(text=f"Question:\n{self.questions[self.index][0]}", font=self.normal_font)
-      self.answer.configure(text="")
-      self.answer_button.grid(row=2, column=1, padx=5, pady=10)
-      self.next_button.grid_forget()
+
+      try:
+        self.flashcard_frame.configure(fg_color=self.original_colour)
+        self.question.configure(text=f"Question:\n{self.questions[self.index][0]}", font=self.normal_font)
+        self.answer.configure(text="")
+        self.answer_button.grid(row=2, column=1, padx=5, pady=10)
+        self.next_button.grid_forget()
+
+      #uses recursion to display the next question if the current one is delayed
+      except IndexError:
+        self.delayed_questions = self.merge_sort(self.delayed_questions)
+        self.questions.append(self.delayed_questions[0])
+        self.delayed_questions.pop(0)
+        self.index = 0
+        next_question()
 
     self.next_button = ctk.CTkButton(self.flashcard_frame, text="Next Question", command=next_question)
 
@@ -248,21 +265,70 @@ class StudyPage(Page):
   #some functions are defined outside of create_widgets due to being called in main.py
   #sets up flashcard UI and functionality
   def start_study(self):
-    self.study_button.grid_forget()
-    self.flashcard_frame.grid(row=0, column=0, padx=20, pady=20)
-    self.question.configure(text=f"Question:\n{self.questions[self.index][0]}", font=self.normal_font)
-    self.question.grid(row=0, column=1, padx=10, pady=10)
-    self.answer.configure(text="")
-    self.answer.grid(row=1, column=1, padx=10, pady=10)
-    self.answer_button.grid(row=2, column=1, padx=20, pady=20)
-    self.stop_button.grid(row=1, column=0, padx=10, pady=10)
+    try:
+      self.study_button.grid_forget()
+      self.flashcard_frame.grid(row=0, column=0, padx=20, pady=20)
+      self.question.configure(text=f"Question:\n{self.questions[self.index][0]}", font=self.normal_font)
+      self.question.grid(row=0, column=1, padx=10, pady=10)
+      self.answer.configure(text="")
+      self.answer.grid(row=1, column=1, padx=10, pady=10)
+      self.answer_button.grid(row=2, column=1, padx=20, pady=20)
+      self.stop_button.grid(row=1, column=0, padx=10, pady=10)
+
+    #uses recursion to display the question if the current one is delayed
+    except IndexError:
+      if len(self.delayed_questions) == 0:
+        self.flashcard_frame.grid_forget()
+        self.study_button.grid(row=0, column=0, pady=100, padx=150)
+
+      else:
+        self.delayed_questions = self.merge_sort(self.delayed_questions)
+        self.questions.append(self.delayed_questions[0])
+        self.delayed_questions.pop(0)
+        self.index = 0
+        self.start_study()
 
   def question_state(self, colour):
     self.next_button.grid(row=2, column=1, padx=5, pady=10)
     self.flashcard_frame.configure(fg_color=colour)
     self.correct_button.grid_forget()
     self.incorrect_button.grid_forget()
-    
+
+  def merge_sort(self, array):
+    #base case: if the array has 1 or 0 elements, it is already sorted
+    if len(array) > 1:
+      mid = len(array) // 2
+
+      #split the array into left and right halves and recursively sort them
+      left_half = array[:mid]
+      right_half = array[mid:]
+      self.merge_sort(left_half)
+      self.merge_sort(right_half)
+
+      #merge the sorted halves back into the original array
+      i = j = k = 0
+      while i < len(left_half) and j < len(right_half):
+        if left_half[i][4] < right_half[j][4]:
+          array[k] = left_half[i]
+          i += 1
+        else:
+          array[k] = right_half[j]
+          j += 1
+        k += 1
+
+      #if there are any remaining elements in the left half, add them
+      while i < len(left_half):
+        array[k] = left_half[i]
+        i += 1
+        k += 1
+
+      #if there are any remaining elements in the right half, add them
+      while j < len(right_half):
+        array[k] = right_half[j]
+        j += 1
+        k += 1
+
+    return array
     
     
   
@@ -292,4 +358,4 @@ class App(ctk.CTk):
     error_window.title("Error")
     error = ctk.CTkLabel(error_window, text=message)
     error.pack()
-    
+
