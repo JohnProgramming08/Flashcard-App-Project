@@ -90,7 +90,7 @@ class HomePage(Page):
     self.stats_frame = ctk.CTkFrame(self)
     self.stats_frame.grid(row=1, column=0, padx=20, pady=20, sticky="n")
     self.recommended_topics_frame = ctk.CTkFrame(self)
-    self.recommended_topics_frame.grid(row=1, column=1, padx=20, pady=20, sticky="n")
+    self.recommended_topics_frame.grid(row=1, column=2, padx=20, pady=20, sticky="n")
 
   def create_widgets(self):
     #displays user stats
@@ -98,7 +98,10 @@ class HomePage(Page):
     self.stats_title.grid(row=0, column=0)
     self.topics_title = ctk.CTkLabel(self.recommended_topics_frame, text="Recommended Topics", font=self.heading_font)
     self.topics_title.grid(row=0, column=0)
-
+      
+    self.update_button = ctk.CTkButton(self.stats_frame, text="Update Stats", width=100, command=self.update_stats)
+    self.update_button.grid(row=5, column=0, padx=5, pady=5)
+    
     self.questions_answered = ctk.CTkLabel(self.stats_frame, text=f"Questions answered: {self.right + self.wrong}", font=self.normal_font)
     self.questions_answered.grid(row=2, column=0)
     self.percentage_display = ctk.CTkLabel(self.stats_frame, text=f"Percentage right: {self.percentage_right}%", font=self.normal_font)
@@ -107,8 +110,12 @@ class HomePage(Page):
     self.xp_display.grid(row=4, column=0)
 
     self.recommended_topics_label = ctk.CTkLabel(self.recommended_topics_frame, text="", font=self.normal_font)
-    self.recommended_topics_label.grid(row=1, column=0)
-
+    self.recommended_topics_label.grid(row=1, column=0, padx=5, pady=5)
+    
+  def update_stats(self):
+    self.questions_answered.configure(text=f"Questions answered: {self.total_answered}")
+    self.percentage_display.configure(text=f"Percentage right: {self.percentage_right}%")
+    self.xp_display.configure(text=f"XP: {self.xp}")
   
 
 class TopicsPage(Page):
@@ -344,6 +351,7 @@ class App(ctk.CTk):
     self.tabs = ctk.CTkTabview(self)
     self.home_tab = self.tabs.add("Home")
     self.home_page = HomePage(self.home_tab, wrong=5, right=4, xp=65)
+    self.home_page.pack(fill='both', expand=True)
 
     self.topics_tab = self.tabs.add("Topics")
     self.topics_page = TopicsPage(self.topics_tab)

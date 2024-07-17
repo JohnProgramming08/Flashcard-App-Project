@@ -1,6 +1,16 @@
 import sqlite3
 
-def sign_up(username, password):
+#changes to the home page
+def show_home_page(username, update_stats1, get_stats, get_recommended_topics, app):
+  update_stats1(app, get_stats)
+  app.intro_page.change_pages(app.intro_page, app.tabs)
+  get_recommended_topics(username, app)
+
+
+def sign_up(username, password, update_stats1, get_stats, get_recommended_topics, app):
+  username = app.intro_page.username_entry.get()
+  password = app.intro_page.password_entry.get()
+  
   #connect to the database
   connection = sqlite3.connect("revision_app.db")
   cursor = connection.cursor()
@@ -9,11 +19,13 @@ def sign_up(username, password):
   valid = True
   if username:
     for i in username:
-      if i == " ":
+      if i == " " or i == '"':
+        app.error_message("Spaces and quotation marks are not allowed")
         valid = False
         break
 
   else:
+    app.error_message("You must have a username")
     valid = False
 
   #checks if the username is already taken
@@ -113,15 +125,17 @@ def sign_up(username, password):
       for question in questions:
         add_question(question[0])
 
-      return True
-
+      show_home_page(username, update_stats1, get_stats, get_recommended_topics, app)
     else:
-      return "used"
+      app.error_message("Username is already in use")
 
-  else:
-    return "spaces"
 
-def login(username, password):
+
+
+def login(update_stats1, get_stats, get_recommended_topics, app):
+  username = app.intro_page.username_entry.get()
+  password = app.intro_page.password_entry.get()
+  
   #connect to the database
   connection = sqlite3.connect("revision_app.db")
   cursor = connection.cursor()
@@ -131,7 +145,7 @@ def login(username, password):
   connection.close()
   #returns false if the details are wrong
   if user is not None:
-    return True
+    show_home_page(username, update_stats1, get_stats, get_recommended_topics, app)
 
   else:
-    return False
+    app.error_message("Incorrect username or password")
