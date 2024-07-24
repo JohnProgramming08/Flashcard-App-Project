@@ -1,5 +1,6 @@
 import customtkinter as ctk
 
+
 class Page(ctk.CTkFrame):
   def __init__(self, parent):
     super().__init__(parent)
@@ -8,15 +9,15 @@ class Page(ctk.CTkFrame):
     self.normal_font = ctk.CTkFont(family="arial", size=13)
     self.subheading_font = ctk.CTkFont(family="arial", size=13, underline=True)
 
-  #creates all frames needed
+  # Create all frames needed
   def create_frames(self):
     pass
 
-  #creates and all widgets needed
+  # Creates all widgets needed
   def create_widgets(self):
     pass
 
-  #changes to the specified page
+  # Change to the specified page
   def change_pages(self, current_page, next_page):
     current_page.pack_forget()
     next_page.pack(fill='both', expand=True)
@@ -38,7 +39,7 @@ class IntroPage(Page):
     self.contact_frame.grid(row=1, column=0, columnspan=2, padx=20, pady=20)
 
   def create_widgets(self):
-    #explains the apps purpose
+    # Explain the apps purpose
     self.title = ctk.CTkLabel(self.information_frame, text="Information", font=self.title_font)
     self.title.grid(row=0, column=0)
 
@@ -52,7 +53,7 @@ class IntroPage(Page):
     self.contact_purpose = ctk.CTkLabel(self.contact_frame, text="If you have any questions or concerns please contact me at: dylan08code@gmail.com", font=self.heading_font)
     self.contact_purpose.grid(row=1, column=0, padx=5)
 
-    #login/sign up interface
+    # Create the login/sign up interface
     self.login_title = ctk.CTkLabel(self.login_frame, text="Account Details", font=self.title_font)
     self.login_title.grid(row=0, column=0)
     
@@ -76,7 +77,7 @@ class HomePage(Page):
     self.total_answered = wrong + right
     self.xp = xp
     
-    #to avoid division by zero error
+    # Avoid division by zero error
     if self.total_answered == 0:
       self.percentage_right = 0
       
@@ -93,7 +94,7 @@ class HomePage(Page):
     self.recommended_topics_frame.grid(row=1, column=2, padx=20, pady=20, sticky="n")
 
   def create_widgets(self):
-    #displays user stats
+    # Display the users stats
     self.stats_title = ctk.CTkLabel(self.stats_frame, text="Stats", font=self.heading_font)
     self.stats_title.grid(row=0, column=0)
     self.topics_title = ctk.CTkLabel(self.recommended_topics_frame, text="Recommended Topics", font=self.heading_font)
@@ -135,7 +136,8 @@ class TopicsPage(Page):
   def create_widgets(self):
     self.topics_title = ctk.CTkLabel(self.topics_frame, text="Topics", font=self.title_font)
     self.topics_title.grid(row=0, column=0)
-    #displays all topics as radio buttons and all subtopics as checkboxes
+    
+    # Display all topics as radio buttons and all subtopics as checkboxes
     self.topics = [["1.1 Systems architecture", "1.1.1 CPU architecture", "1.1.2 CPU performance", "1.1.3 Embedded systems"],
                    ["1.2 Memory and storage", "1.2.1 Primary storage", "1.2.2 Secondary storage", "1.2.3 Units of storage", "1.2.4 Data storage", "1.2.5 Compression"],
                    ["1.3 Networks and protocols", "1.3.1 Networks and topologies", "1.3.2 Networks, protocols and layers"],
@@ -149,7 +151,7 @@ class TopicsPage(Page):
                    ["2.5 Languages and IDEs", "2.5.1 Languages", "2.5.1 IDEs"]]
 
     self.selected_topics = []
-    #function to make a list of checked subtopics
+    # Make a list of checked subtopics
     def checkbox_command(subtopic):
       current_state = self.checked_topic.get()
       if current_state == "on":
@@ -164,38 +166,41 @@ class TopicsPage(Page):
       else:
         self.selected_topics.append(subtopic)
     
-    #checkbox for each subtopic
+    # Create a checkbox for each subtopic
     self.subtopics_title = ctk.CTkLabel(self.subtopics_frame, text="Subtopics", font=self.subheading_font)
     self.subtopics_title.grid(row=0, column=0)
 
     self.checked_topic = ctk.StringVar(value="off")
     self.subtopic_buttons = []
     def display_subtopics():
-      #destroys current checkboxes before creating new ones
-      for i in reversed(self.subtopic_buttons):
-        self.subtopic_buttons.pop(self.subtopic_buttons.index(i))
+      # Destroy current checkboxes before creating new ones
+      for subtopic in reversed(self.subtopic_buttons):
+        subtopic_index = self.subtopic_buttons.index(subtopic)
+        self.subtopic_buttons.pop(subtopic_index)
         self.selected_topics.clear()
-        i.destroy()
+        subtopic.destroy()
 
-      #creates new checkboxes
+      # Create new checkboxes
+      # Self.topics is an array of arrays (topic name, then subtopics)
       for i in range(len(self.topics[self.topic_number.get()])-1):
-        subtopic = self.topics[self.topic_number.get()][i+1]
-        subtopic_button = ctk.CTkCheckBox(self.subtopics_frame, text=self.topics[self.topic_number.get()][i+1], font=self.normal_font, variable=ctk.StringVar(value="off"), onvalue="on", offvalue="off", command=lambda s=subtopic: checkbox_command(s))
+        topic_number = self.topics[self.topic_number.get()]
+        subtopic = topic_number[i+1]  # First element isn't a subtopic
+        subtopic_button = ctk.CTkCheckBox(self.subtopics_frame, text=subtopic, font=self.normal_font, variable=ctk.StringVar(value="off"), onvalue="on", offvalue="off", command=lambda s=subtopic: checkbox_command(s))
         subtopic_button.grid(row=i+1, column=0, sticky="w")
         self.subtopic_buttons.append(subtopic_button)
         
-    #displays all topics as radio buttons 
+    # Display all topics as radio buttons 
     self.topic_number = ctk.IntVar(value=0)
-    for i in self.topics:
-      topic_button = ctk.CTkRadioButton(self.topics_frame, text=i[0], font=self.heading_font, value=self.topics.index(i), variable=self.topic_number, command=display_subtopics)
-      topic_button.grid(row=self.topics.index(i) + 1, column=0, sticky="w")
+    for topic in self.topics:
+      topic_button = ctk.CTkRadioButton(self.topics_frame, text=topic[0], font=self.heading_font, value=self.topics.index(topic), variable=self.topic_number, command=display_subtopics)
+      topic_button.grid(row=self.topics.index(topic) + 1, column=0, sticky="w")
   
     self.add_button = ctk.CTkButton(self, text="Add", fg_color="green")
     self.add_button.grid(row=2, column=0, columnspan=2, padx=5, pady=10)
     self.remove_button = ctk.CTkButton(self, text="Remove", fg_color="red")
     self.remove_button.grid(row=3, column=0, columnspan=2, padx=5, pady=10)
   
-    #displays chosen topics
+    # Display chosen topics
     self.chosen_topics_title = ctk.CTkLabel(self.chosen_topics_frame, text="Chosen Topics", font=self.title_font)
     self.chosen_topics_title.grid(row=0, column=0)
     self.chosen_topics = ctk.CTkLabel(self.chosen_topics_frame, text="", font=self.normal_font)
@@ -222,9 +227,9 @@ class StudyPage(Page):
     self.study_button = ctk.CTkButton(self, text="Get Studying!", command=lambda: self.start_study())
     self.study_button.grid(row=0, column=0, pady=100, padx=150)
     
-    #flashcard functionality
     def show_answer():
-      self.answer.configure(text=f"Answer:\n{self.questions[self.index][1]}", font=self.normal_font)
+      answer = self.questions[self.index][1]
+      self.answer.configure(text=f"Answer:\n{answer}", font=self.normal_font)
       self.correct_button.grid(row=2, column=0, padx=5, pady=10)
       self.incorrect_button.grid(row=2, column=2, padx=5, pady=10)
       self.answer_button.grid_forget()
@@ -233,29 +238,30 @@ class StudyPage(Page):
     self.correct_button = ctk.CTkButton(self.flashcard_frame, text="Correct", fg_color="green", command=lambda: self.question_state("green"))
     self.incorrect_button = ctk.CTkButton(self.flashcard_frame, text="Incorrect", fg_color="red", command=lambda: self.question_state("red"))
 
+    # Display the next question in the array
     def next_question():
       self.index += 1
-      if self.index == len(self.questions):
-        self.index = 0
 
       try:
+        question = self.questions[self.index][0]
         self.flashcard_frame.configure(fg_color=self.original_colour)
-        self.question.configure(text=f"Question:\n{self.questions[self.index][0]}", font=self.normal_font)
+        self.question.configure(text=f"Question:\n{question}", font=self.normal_font)
         self.answer.configure(text="")
         self.answer_button.grid(row=2, column=1, padx=5, pady=10)
         self.next_button.grid_forget()
 
-      #uses recursion to display the next question if the current one is delayed
+      # Use recursion to display the next question if the current one is delayed
       except IndexError:
         self.delayed_questions = self.merge_sort(self.delayed_questions)
-        self.questions.append(self.delayed_questions[0])
+        question = self.delayed_questions[0]
+        self.questions.append(question)
         self.delayed_questions.pop(0)
         self.index = 0
         next_question()
 
     self.next_button = ctk.CTkButton(self.flashcard_frame, text="Next Question", command=next_question)
 
-    #returns page to original state
+    # Return page to original state
     def stop_study():
       self.flashcard_frame.configure(fg_color=self.original_colour)
       self.flashcard_frame.grid_forget()
@@ -269,8 +275,8 @@ class StudyPage(Page):
       
     self.stop_button = ctk.CTkButton(self, text="Stop Studying", command=stop_study)
 
-  #some functions are defined outside of create_widgets due to being called in main.py
-  #sets up flashcard UI and functionality
+  # Some functions are defined outside of create_widgets due to being called in main.py
+  # Set up flashcard UI and functionality
   def start_study(self):
     try:
       self.study_button.grid_forget()
@@ -282,7 +288,7 @@ class StudyPage(Page):
       self.answer_button.grid(row=2, column=1, padx=20, pady=20)
       self.stop_button.grid(row=1, column=0, padx=10, pady=10)
 
-    #uses recursion to display the question if the current one is delayed
+    # Use recursion to display the question if the current one is delayed
     except IndexError:
       if len(self.delayed_questions) == 0:
         self.flashcard_frame.grid_forget()
@@ -302,17 +308,17 @@ class StudyPage(Page):
     self.incorrect_button.grid_forget()
 
   def merge_sort(self, array):
-    #base case: if the array has 1 or 0 elements, it is already sorted
+    # Base case: if the array has 1 or 0 elements, it is already sorted
     if len(array) > 1:
-      mid = len(array) // 2
+      midpoint = len(array) // 2
 
-      #split the array into left and right halves and recursively sort them
-      left_half = array[:mid]
-      right_half = array[mid:]
+      # Split the array into left and right halves and recursively sort them
+      left_half = array[:midpoint]
+      right_half = array[midpoint:]
       self.merge_sort(left_half)
       self.merge_sort(right_half)
 
-      #merge the sorted halves back into the original array
+      # Merge the sorted halves back into the original array based on delay values
       i = j = k = 0
       while i < len(left_half) and j < len(right_half):
         if left_half[i][4] < right_half[j][4]:
@@ -323,13 +329,13 @@ class StudyPage(Page):
           j += 1
         k += 1
 
-      #if there are any remaining elements in the left half, add them
+      # If there are any remaining elements in the left half, add them
       while i < len(left_half):
         array[k] = left_half[i]
         i += 1
         k += 1
 
-      #if there are any remaining elements in the right half, add them
+      # If there are any remaining elements in the right half, add them
       while j < len(right_half):
         array[k] = right_half[j]
         j += 1
@@ -338,8 +344,6 @@ class StudyPage(Page):
     return array
     
     
-  
-      
 class App(ctk.CTk):
   def __init__(self):
     super().__init__()
@@ -347,7 +351,7 @@ class App(ctk.CTk):
     self.intro_page = IntroPage(self, "")
     self.intro_page.pack()
 
-    #creates the other pages but doesn't add them
+    # Create the other pages but don't add them
     self.tabs = ctk.CTkTabview(self)
     self.home_tab = self.tabs.add("Home")
     self.home_page = HomePage(self.home_tab, wrong=5, right=4, xp=65)
