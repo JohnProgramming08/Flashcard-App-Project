@@ -1,18 +1,18 @@
 import sqlite3
 
+# Connect to the database
 connection = sqlite3.connect("revision_app.db")
 cursor = connection.cursor()
-cursor.execute("DROP TABLE IF EXISTS flashcards")
 
 create_table = """CREATE TABLE IF NOT EXISTS flashcards(
                   question_text TEXT PRIMARY KEY,
                   question_answer TEXT,
                   marks INTEGER,
                   subtopic TEXT)"""
-
 cursor.execute(create_table)
 connection.commit()
 
+# Add all of the questions to the database
 def add_question(question):
   cursor.execute("INSERT INTO flashcards (question_text, question_answer, marks, subtopic) VALUES (?, ?, ?, ?)", (question[0], question[1], question[2], question[3]))
   connection.commit()
@@ -98,9 +98,5 @@ questions = [["What is the purpose of the CPU?", "To complete the fetch-execute 
              
 for i in questions:
   add_question(i)
-  #print(cursor.execute(f"SELECT * FROM flashcards WHERE question_text = {questions[0]}"))
-                  
-
-
 
 connection.close()
