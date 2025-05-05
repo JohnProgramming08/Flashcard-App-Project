@@ -1,0 +1,16 @@
+modules = ["python-3.11"]
+
+hidden = [".pythonlibs"]
+run = "run"
+
+[nix]
+channel = "stable-24_05"
+
+[unitTest]
+language = "python3"
+
+[gitHubImport]
+requiredFiles = [".replit", "replit.nix"]
+
+[deployment]
+run = ["sh", "-c", "run"]
